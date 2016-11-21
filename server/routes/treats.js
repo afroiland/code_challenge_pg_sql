@@ -47,15 +47,19 @@ router.post('/', function(req, res) {
 });
 
 router.get('/:id', function(req, res) {
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
   treatID = req.params.id;
+  treatID2 = capitalizeFirstLetter(treatID);
   console.log('treat to search for: ', treatID);
   pg.connect(connectionString, function(err, client, done) {
     if(err) {
       console.log('connection error: ', err);
       res.sendStatus(500);
     }
-    client.query('SELECT * FROM treats WHERE name= $1',
-    [treatID],
+    client.query('SELECT * FROM treats WHERE name= $1 OR name= $2',
+    [treatID, treatID2],
     function(err, result) {
       done(); // close the connection.
       // console.log('the client!:', client);
