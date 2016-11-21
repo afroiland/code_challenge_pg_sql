@@ -46,5 +46,27 @@ router.post('/', function(req, res) {
   });
 });
 
+router.get('/:id', function(req, res) {
+  treatID = req.params.id;
+  console.log('treat to search for: ', treatID);
+  pg.connect(connectionString, function(err, client, done) {
+    if(err) {
+      console.log('connection error: ', err);
+      res.sendStatus(500);
+    }
+    client.query('SELECT * FROM treats WHERE name= $1',
+    [treatID],
+    function(err, result) {
+      done(); // close the connection.
+      // console.log('the client!:', client);
+      if(err) {
+        console.log('select query error: ', err);
+        res.sendStatus(500);
+      }
+      res.send(result.rows);
+      });
+    });
+});
+
 
 module.exports = router;
